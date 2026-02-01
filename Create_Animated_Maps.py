@@ -4,7 +4,7 @@ import os
 
 # Set page configuration
 st.set_page_config(
-    page_title="GeoSpatial Mapping Suite",
+    page_title="GeoSpatial Mapping Tools",
     page_icon="🗺️",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -229,8 +229,8 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # Main content
 st.markdown("""
 <div style="text-align: center; margin-bottom: 40px;">
-    <h1 style="font-size: 3rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">🗺️ GeoSpatial Mapping Suite</h1>
-    <p style="font-size: 1.2rem; color: #b0bec5;">Advanced Air Quality Visualization Tools</p>
+    <h1 style="font-size: 3rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">🗺️ GeoSpatial Mapping Tools</h1>
+    <p style="font-size: 1.2rem; color: #b0bec5;">Geospatial Visualization Tools - An online tool from YESS Community</p>
 </div>
 """, unsafe_allow_html=True)
 
