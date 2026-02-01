@@ -228,7 +228,7 @@ st.markdown("""
 <div class="main-container">
     <div class="header-section">
         <h1 class="main-title">🗺️ GeoSpatial Mapping Suite</h1>
-        <p class="subtitle">Advanced Air Quality Visualization Tools</p>
+        <p class="subtitle">Geospatial Visualization Tools</p>
     </div>
     
     <div class="cards-container">
