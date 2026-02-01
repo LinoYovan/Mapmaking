@@ -230,7 +230,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align: center; margin-bottom: 40px;">
     <h1 style="font-size: 3rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">🗺️ GeoSpatial Mapping Tools</h1>
-    <p style="font-size: 1.2rem; color: #b0bec5;">Geospatial Visualization Tools - An online tool from YESS Community</p>
+    <p style="font-size: 1.2rem; color: #b0bec5;">An online tool from YESS Community</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -242,7 +242,7 @@ with col1:
     <div style="text-align: center; padding: 20px; background: rgba(31, 119, 180, 0.1); border-radius: 10px;">
         <div style="font-size: 2.5rem; margin-bottom: 10px;">🗺️</div>
         <h3 style="color: #1f77b4; margin: 10px 0;">Single Map Generator</h3>
-        <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Create a single high-quality map</p>
+        <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Create a single interpolated map</p>
         <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
             <li>Customizable labels</li>
             <li>Multiple formats</li>
