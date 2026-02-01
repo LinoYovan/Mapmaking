@@ -235,7 +235,7 @@ st.markdown("""
     </div>
     
     <div class="cards-container">
-        <div class="card">
+        <div class="card" onclick="document.querySelector('button[data-tool=single]').click();" style="cursor: pointer;">
             <span class="card-icon">🗺️</span>
             <h2 class="card-title">Single Map Generator</h2>
             <p class="card-description">Create a single high-quality map with interpolated sampling points.</p>
@@ -250,7 +250,7 @@ st.markdown("""
             </div>
         </div>
         
-        <div class="card">
+        <div class="card" onclick="document.querySelector('button[data-tool=multi]').click();" style="cursor: pointer;">
             <span class="card-icon">📊</span>
             <h2 class="card-title">Multi-Map Grid</h2>
             <p class="card-description">Generate multiple maps in a grid layout for seasonal or time-series data.</p>
@@ -265,7 +265,7 @@ st.markdown("""
             </div>
         </div>
         
-        <div class="card">
+        <div class="card" onclick="document.querySelector('button[data-tool=animator]').click();" style="cursor: pointer;">
             <span class="card-icon">✨</span>
             <h2 class="card-title">Interactive Animator</h2>
             <p class="card-description">Create animated GIFs showing time-series data with interactive controls.</p>
@@ -281,6 +281,13 @@ st.markdown("""
         </div>
     </div>
     
+    <!-- Hidden buttons for navigation -->
+    <div style="display: none;">
+        <button data-tool="single" onclick="window.location.href='?tool=single'"></button>
+        <button data-tool="multi" onclick="window.location.href='?tool=multi'"></button>
+        <button data-tool="animator" onclick="window.location.href='?tool=animator'"></button>
+    </div>
+    
     <div class="info-section">
         <div class="divider"></div>
         <p>📌 Select an application above to get started</p>
@@ -291,12 +298,12 @@ st.markdown("""
 # Handle app selection via query parameters
 query_params = st.query_params
 
-if "app" in query_params:
-    selected_app = query_params["app"]
+if "tool" in query_params:
+    selected_tool = query_params["tool"]
     
-    if selected_app == "single":
+    if selected_tool == "single":
         st.switch_page("pages/1_single_map.py")
-    elif selected_app == "multi":
+    elif selected_tool == "multi":
         st.switch_page("pages/2_multi_map_grid.py")
-    elif selected_app == "animator":
+    elif selected_tool == "animator":
         st.switch_page("pages/3_animator.py")
