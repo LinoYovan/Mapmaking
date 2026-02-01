@@ -1,8 +1,10 @@
 import streamlit as st
+from streamlit_option_menu import option_menu
+import os
 
 # Set page configuration
 st.set_page_config(
-    page_title="Create Maps",
+    page_title="GeoSpatial Mapping Suite",
     page_icon="🗺️",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -16,16 +18,17 @@ st.markdown("""
         padding: 0;
     }
     
+    body {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
     .main {
         background: transparent !important;
     }
     
     .stMainBlockContainer {
         background: transparent !important;
-    }
-    
-    html, body {
-        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     }
     
     .main-container {
@@ -35,7 +38,6 @@ st.markdown("""
         justify-content: center;
         min-height: 100vh;
         padding: 40px 20px;
-        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     }
     
     .header-section {
@@ -214,25 +216,26 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Hide Streamlit UI
-st.markdown("""
+# Hide default Streamlit UI elements
+hide_streamlit_style = """
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         .stDeployButton {visibility: hidden;}
     </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Main content
 st.markdown("""
 <div class="main-container">
     <div class="header-section">
         <h1 class="main-title">🗺️ GeoSpatial Mapping Suite</h1>
-        <p class="subtitle">Geospatial Visualization Tools</p>
+        <p class="subtitle">Advanced Air Quality Visualization Tools</p>
     </div>
     
     <div class="cards-container">
-        <div class="card">
+        <div class="card" onclick="document.querySelector('button[data-tool=single]').click();" style="cursor: pointer;">
             <span class="card-icon">🗺️</span>
             <h2 class="card-title">Single Map Generator</h2>
             <p class="card-description">Create a single high-quality map with interpolated sampling points.</p>
@@ -247,7 +250,7 @@ st.markdown("""
             </div>
         </div>
         
-        <div class="card">
+        <div class="card" onclick="document.querySelector('button[data-tool=multi]').click();" style="cursor: pointer;">
             <span class="card-icon">📊</span>
             <h2 class="card-title">Multi-Map Grid</h2>
             <p class="card-description">Generate multiple maps in a grid layout for seasonal or time-series data.</p>
@@ -262,7 +265,7 @@ st.markdown("""
             </div>
         </div>
         
-        <div class="card">
+        <div class="card" onclick="document.querySelector('button[data-tool=animator]').click();" style="cursor: pointer;">
             <span class="card-icon">✨</span>
             <h2 class="card-title">Interactive Animator</h2>
             <p class="card-description">Create animated GIFs showing time-series data with interactive controls.</p>
@@ -278,26 +281,29 @@ st.markdown("""
         </div>
     </div>
     
+    <!-- Hidden buttons for navigation -->
+    <div style="display: none;">
+        <button data-tool="single" onclick="window.location.href='?tool=single'"></button>
+        <button data-tool="multi" onclick="window.location.href='?tool=multi'"></button>
+        <button data-tool="animator" onclick="window.location.href='?tool=animator'"></button>
+    </div>
+    
     <div class="info-section">
         <div class="divider"></div>
-        <p>📌 Use the sidebar or click a card above to select an application</p>
+        <p>📌 Select an application above to get started</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Sidebar navigation
-with st.sidebar:
-    st.header("🗺️ Navigation")
+# Handle app selection via query parameters
+query_params = st.query_params
+
+if "tool" in query_params:
+    selected_tool = query_params["tool"]
     
-    selected = st.radio(
-        "Choose a tool:",
-        ["📌 Home", "🗺️ Single Map", "📊 Multi-Map Grid", "✨ Animator"],
-        index=0
-    )
-    
-    if selected == "🗺️ Single Map":
+    if selected_tool == "single":
         st.switch_page("pages/1_single_map.py")
-    elif selected == "📊 Multi-Map Grid":
+    elif selected_tool == "multi":
         st.switch_page("pages/2_multi_map_grid.py")
-    elif selected == "✨ Animator":
+    elif selected_tool == "animator":
         st.switch_page("pages/3_animator.py")
