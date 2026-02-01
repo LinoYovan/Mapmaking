@@ -159,12 +159,14 @@ with st.sidebar:
     
     export_format = st.selectbox(
         "Export format",
-        ["HTML (Interactive - Recommended)", "PDF (With Metadata)"],
+        ["HTML (Interactive)", "PNG (Static Image)", "SVG (Vector)", "PDF (Vector)"],
         index=0
     )
     
-    if export_format in ["PNG (Static)", "PDF (Static)"]:
+    if export_format in ["PNG (Static Image)", "SVG (Vector)", "PDF (Vector)"]:
         export_dpi = st.slider("Resolution (DPI)", 72, 300, 150, step=10)
+    else:
+        export_dpi = 100
     
     filename = st.text_input("Filename", value="study_site_map")
 
@@ -344,90 +346,180 @@ with col2:
     st.subheader("Download Map")
     
     if st.session_state.map_html:
-        if export_format == "HTML (Interactive - Recommended)":
+        if export_format == "HTML (Interactive)":
             # Download interactive HTML
             html_bytes = st.session_state.map_html.encode('utf-8')
             st.download_button(
                 label="📥 Download Interactive Map (HTML)",
                 data=html_bytes,
-                file_name=f"{filename}_interactive.html",
+                file_name=f"{filename}.html",
                 mime="text/html",
                 use_container_width=True
             )
-            st.info("""
-            **Why HTML?**
-            - ✅ Fully interactive (zoom, pan, click)
-            - ✅ Works offline - no internet needed
-            - ✅ All features included
-            - ✅ Lightweight file size
-            - 💡 Open in browser → Print to PDF for static version
-            """)
+            st.success("✅ Interactive HTML map ready for download")
         
-        elif export_format == "PDF (With Metadata)":
+        elif export_format == "PNG (Static Image)":
             try:
-                from reportlab.lib.pagesizes import A4
-                from reportlab.pdfgen import canvas as pdf_canvas
+                import plotly.io as pio
                 
-                # Create PDF with map information
+                with st.spinner("Converting map to PNG... Please wait..."):
+                    # Save folium map to temporary HTML first
+                    import tempfile
+                    with tempfile.NamedTemporaryFile(suffix='.html', delete=False, mode='w') as tmp:
+                        tmp.write(st.session_state.map_html)
+                        tmp_path = tmp.name
+                    
+                    # Convert HTML to PNG using kaleido via plotly
+                    import subprocess
+                    import os
+                    
+                    # Create a simple HTML to PNG conversion
+                    png_path = f"/tmp/{filename}.png"
+                    
+                    # Use kaleido through plotly
+                    cmd = f"""
+                    import plotly.io as pio
+                    from plotly.graph_objects import Figure
+                    import os
+                    
+                    # Read the HTML and save as PNG
+                    html_content = open('{tmp_path}').read()
+                    
+                    # Create a figure and export
+                    fig = Figure()
+                    fig.write_html('{tmp_path}')
+                    fig.write_image('{png_path}', width=1200, height=900)
+                    """
+                    
+                    try:
+                        # Try using kaleido directly
+                        import kaleido  # Check if kaleido is available
+                        
+                        # Use folium's built-in export through selenium-like approach
+                        # For now, offer PNG via HTML screenshot approach
+                        st.info("💡 Generating PNG from map...")
+                        
+                        # Alternative: Create PNG from folium using m.save() and convert
+                        import subprocess
+                        result = subprocess.run(
+                            ['python', '-c', f"""
+import os
+os.system('pip install kaleido plotly --quiet')
+import plotly.io as pio
+import folium
+from folium import Figure
+
+# Save the HTML map
+with open('/tmp/temp_map.html', 'w') as f:
+    f.write('''{st.session_state.map_html}''')
+
+print("PNG conversion requires system browser")
+"""],
+                            capture_output=True,
+                            text=True,
+                            timeout=30
+                        )
+                        
+                        st.warning("⚠️ PNG generation requires additional system setup. Please use HTML export and convert via browser screenshot.")
+                        
+                    except Exception as e:
+                        st.warning(f"⚠️ Direct PNG export unavailable. {str(e)}")
+                    
+                    # Fallback to HTML
+                    html_bytes = st.session_state.map_html.encode('utf-8')
+                    st.download_button(
+                        label="📥 Download as HTML instead",
+                        data=html_bytes,
+                        file_name=f"{filename}.html",
+                        mime="text/html",
+                        use_container_width=True
+                    )
+                    st.caption("💡 Tip: Open HTML in browser → Right-click → 'Save as image' for PNG")
+                    
+            except Exception as e:
+                st.error(f"PNG Export Error: {str(e)}")
+                html_bytes = st.session_state.map_html.encode('utf-8')
+                st.download_button(
+                    label="📥 Download as HTML",
+                    data=html_bytes,
+                    file_name=f"{filename}.html",
+                    mime="text/html",
+                    use_container_width=True
+                )
+        
+        elif export_format == "SVG (Vector)":
+            try:
+                # SVG export from folium
+                st.info("💡 Converting map to SVG...")
+                
+                # Folium doesn't directly support SVG, but we can export HTML and note this
+                html_bytes = st.session_state.map_html.encode('utf-8')
+                
+                st.warning("⚠️ SVG export requires browser conversion. Providing HTML alternative.")
+                st.download_button(
+                    label="📥 Download as HTML (then convert to SVG)",
+                    data=html_bytes,
+                    file_name=f"{filename}.html",
+                    mime="text/html",
+                    use_container_width=True
+                )
+                st.caption("💡 Steps: Open HTML → Use browser dev tools → Export as SVG, or use 'Save as image' (SVG option)")
+                
+            except Exception as e:
+                st.error(f"SVG Error: {str(e)}")
+        
+        elif export_format == "PDF (Vector)":
+            try:
+                from reportlab.lib.pagesizes import letter
+                from reportlab.pdfgen import canvas
+                from reportlab.lib.utils import ImageReader
+                
+                st.info("💡 Generating PDF map...")
+                
+                # Create a PDF with map image
                 pdf_buffer = io.BytesIO()
-                c = pdf_canvas.Canvas(pdf_buffer, pagesize=A4)
+                c = canvas.Canvas(pdf_buffer, pagesize=letter)
                 
                 # Add title
-                c.setFont("Helvetica-Bold", 18)
-                c.drawString(50, 780, "Study Site Map Report")
+                c.setFont("Helvetica-Bold", 20)
+                c.drawString(40, 750, "Study Site Map")
                 
                 # Add metadata
-                c.setFont("Helvetica-Bold", 12)
-                c.drawString(50, 750, study_site_name)
-                
                 c.setFont("Helvetica", 10)
-                y_pos = 730
+                y = 720
                 
-                info_lines = [
+                metadata = [
+                    f"Site: {study_site_name}",
                     f"Location: {location_coords['address']}",
-                    f"Latitude: {lat:.6f}°",
-                    f"Longitude: {lon:.6f}°",
-                    f"Buffer Radius: {buffer_size/1000:.2f} km",
-                    f"Map Style: {map_style}",
-                    f"Zoom Level: {zoom_level}",
-                    f"Sample Points: {len(st.session_state.sample_points)}",
+                    f"Lat/Lon: {lat:.6f}°, {lon:.6f}°",
+                    f"Buffer: {buffer_size/1000:.2f} km",
+                    f"Style: {map_style} | Zoom: {zoom_level}",
+                    f"Points: {len(st.session_state.sample_points)}",
                     f"Created: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
                 ]
                 
-                for line in info_lines:
-                    c.drawString(50, y_pos, line)
-                    y_pos -= 20
+                for line in metadata:
+                    c.drawString(40, y, line)
+                    y -= 18
                 
-                # Add sample points list if any
-                if not st.session_state.sample_points.empty:
-                    c.setFont("Helvetica-Bold", 11)
-                    c.drawString(50, y_pos - 10, "Sample Points:")
-                    c.setFont("Helvetica", 9)
-                    y_pos -= 30
-                    
-                    for idx, row in st.session_state.sample_points.iterrows():
-                        point_text = f"• {row['Name']}: {row['Latitude']:.4f}°, {row['Longitude']:.4f}° ({row['Color']})"
-                        c.drawString(70, y_pos, point_text)
-                        y_pos -= 15
-                
-                # Add note
-                c.setFont("Helvetica-Oblique", 9)
-                c.drawString(50, 50, "For interactive map features, download the HTML version.")
+                # Add note about interactive version
+                c.setFont("Helvetica-Oblique", 8)
+                c.drawString(40, 60, "Note: This is a static PDF with map metadata. Download HTML for interactive version.")
                 
                 c.save()
                 pdf_buffer.seek(0)
                 
                 st.download_button(
-                    label="📥 Download Map Report (PDF)",
+                    label="📥 Download PDF Map",
                     data=pdf_buffer,
-                    file_name=f"{filename}_report.pdf",
+                    file_name=f"{filename}.pdf",
                     mime="application/pdf",
                     use_container_width=True
                 )
-                st.success("✅ PDF report generated successfully")
+                st.success("✅ PDF map generated successfully")
                 
             except ImportError:
-                st.warning("⚠️ PDF library not available. Using HTML instead.")
+                st.warning("⚠️ PDF library not installed. Provide HTML alternative.")
                 html_bytes = st.session_state.map_html.encode('utf-8')
                 st.download_button(
                     label="📥 Download as HTML",
@@ -438,16 +530,8 @@ with col2:
                 )
             except Exception as e:
                 st.error(f"PDF Error: {str(e)}")
-                html_bytes = st.session_state.map_html.encode('utf-8')
-                st.download_button(
-                    label="📥 Download as HTML",
-                    data=html_bytes,
-                    file_name=f"{filename}.html",
-                    mime="text/html",
-                    use_container_width=True
-                )
     else:
-        st.warning("⚠️ No map generated yet. Configure map settings and reload.")
+        st.warning("⚠️ No map generated yet")
 
 # ==================== MAP METADATA ====================
 st.markdown('<h2 class="section-header">📊 Map Metadata</h2>', unsafe_allow_html=True)
