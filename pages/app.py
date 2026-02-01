@@ -236,35 +236,48 @@ st.markdown("""
     
     <div class="cards-container">
         <div class="card">
-            <span class="card-icon">✨</span>
-            <h2 class="card-title">Interactive Animator</h2>
-            <p class="card-description">Create dynamic animated maps with interactive controls and real-time visualization.</p>
+            <span class="card-icon">🗺️</span>
+            <h2 class="card-title">Single Map Generator</h2>
+            <p class="card-description">Create a single high-quality map with interpolated sampling points.</p>
             <div class="card-features">
                 <ul>
-                    <li>Upload CSV & Shapefile data</li>
-                    <li>Interactive month selection</li>
-                    <li>Customizable interpolation</li>
-                    <li>Generate GIF animations</li>
-                    <li>Download PNG visualizations</li>
+                    <li>RBF interpolation</li>
+                    <li>Single snapshot mapping</li>
+                    <li>Customizable labels</li>
+                    <li>Multiple export formats</li>
+                    <li>Publication-ready output</li>
                 </ul>
             </div>
-            <button class="card-button" onclick="window.location.href='?app=animator'">Launch Animator</button>
         </div>
         
         <div class="card">
             <span class="card-icon">📊</span>
-            <h2 class="card-title">Static Map Generator</h2>
-            <p class="card-description">Generate high-quality static maps with advanced customization options.</p>
+            <h2 class="card-title">Multi-Map Grid</h2>
+            <p class="card-description">Generate multiple maps in a grid layout for seasonal or time-series data.</p>
             <div class="card-features">
                 <ul>
-                    <li>Multi-month grid layouts</li>
-                    <li>Fine-tuned styling controls</li>
-                    <li>Custom colormaps & legends</li>
-                    <li>Professional export formats</li>
-                    <li>Publication-ready quality</li>
+                    <li>Batch processing</li>
+                    <li>Customizable grid layout</li>
+                    <li>Consistent color scaling</li>
+                    <li>Interactive controls</li>
+                    <li>Professional styling</li>
                 </ul>
             </div>
-            <button class="card-button" onclick="window.location.href='?app=static'">Launch Generator</button>
+        </div>
+        
+        <div class="card">
+            <span class="card-icon">✨</span>
+            <h2 class="card-title">Interactive Animator</h2>
+            <p class="card-description">Create animated GIFs showing time-series data with interactive controls.</p>
+            <div class="card-features">
+                <ul>
+                    <li>Interactive month selection</li>
+                    <li>Customizable interpolation</li>
+                    <li>GIF animation generation</li>
+                    <li>Real-time adjustment</li>
+                    <li>PNG export option</li>
+                </ul>
+            </div>
         </div>
     </div>
     
@@ -281,7 +294,9 @@ query_params = st.query_params
 if "app" in query_params:
     selected_app = query_params["app"]
     
-    if selected_app == "animator":
-        st.switch_page("pages/1_animator.py")
-    elif selected_app == "static":
-        st.switch_page("pages/2_static_generator.py")
+    if selected_app == "single":
+        st.switch_page("pages/1_single_map.py")
+    elif selected_app == "multi":
+        st.switch_page("pages/2_multi_map_grid.py")
+    elif selected_app == "animator":
+        st.switch_page("pages/3_animator.py")
