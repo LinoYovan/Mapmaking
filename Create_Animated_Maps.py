@@ -271,7 +271,7 @@ with col3:
     st.markdown("""
     <div style="text-align: center; padding: 20px; background: rgba(245, 87, 108, 0.1); border-radius: 10px;">
         <div style="font-size: 2.5rem; margin-bottom: 10px;">✨</div>
-        <h3 style="color: #f5576c; margin: 10px 0;">Interactive Animator</h3>
+        <h3 style="color: #f5576c; margin: 10px 0;">Create Animated Maps</h3>
         <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Animated GIFs from time-series</p>
         <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
             <li>Custom interpolation</li>
