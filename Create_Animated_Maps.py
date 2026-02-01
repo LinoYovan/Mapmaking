@@ -228,82 +228,68 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 # Main content
 st.markdown("""
-<div class="main-container">
-    <div class="header-section">
-        <h1 class="main-title">🗺️ GeoSpatial Mapping Suite</h1>
-        <p class="subtitle">Advanced Air Quality Visualization Tools</p>
-    </div>
-    
-    <div class="cards-container">
-        <div class="card" onclick="document.querySelector('button[data-tool=single]').click();" style="cursor: pointer;">
-            <span class="card-icon">🗺️</span>
-            <h2 class="card-title">Single Map Generator</h2>
-            <p class="card-description">Create a single high-quality map with interpolated sampling points.</p>
-            <div class="card-features">
-                <ul>
-                    <li>RBF interpolation</li>
-                    <li>Single snapshot mapping</li>
-                    <li>Customizable labels</li>
-                    <li>Multiple export formats</li>
-                    <li>Publication-ready output</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="card" onclick="document.querySelector('button[data-tool=multi]').click();" style="cursor: pointer;">
-            <span class="card-icon">📊</span>
-            <h2 class="card-title">Multi-Map Grid</h2>
-            <p class="card-description">Generate multiple maps in a grid layout for seasonal or time-series data.</p>
-            <div class="card-features">
-                <ul>
-                    <li>Batch processing</li>
-                    <li>Customizable grid layout</li>
-                    <li>Consistent color scaling</li>
-                    <li>Interactive controls</li>
-                    <li>Professional styling</li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="card" onclick="document.querySelector('button[data-tool=animator]').click();" style="cursor: pointer;">
-            <span class="card-icon">✨</span>
-            <h2 class="card-title">Interactive Animator</h2>
-            <p class="card-description">Create animated GIFs showing time-series data with interactive controls.</p>
-            <div class="card-features">
-                <ul>
-                    <li>Interactive month selection</li>
-                    <li>Customizable interpolation</li>
-                    <li>GIF animation generation</li>
-                    <li>Real-time adjustment</li>
-                    <li>PNG export option</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Hidden buttons for navigation -->
-    <div style="display: none;">
-        <button data-tool="single" onclick="window.location.href='?tool=single'"></button>
-        <button data-tool="multi" onclick="window.location.href='?tool=multi'"></button>
-        <button data-tool="animator" onclick="window.location.href='?tool=animator'"></button>
-    </div>
-    
-    <div class="info-section">
-        <div class="divider"></div>
-        <p>📌 Select an application above to get started</p>
-    </div>
+<div style="text-align: center; margin-bottom: 40px;">
+    <h1 style="font-size: 3rem; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">🗺️ GeoSpatial Mapping Suite</h1>
+    <p style="font-size: 1.2rem; color: #b0bec5;">Advanced Air Quality Visualization Tools</p>
 </div>
 """, unsafe_allow_html=True)
 
-# Handle app selection via query parameters
-query_params = st.query_params
+# Create three columns for the tools
+col1, col2, col3 = st.columns(3, gap="large")
 
-if "tool" in query_params:
-    selected_tool = query_params["tool"]
-    
-    if selected_tool == "single":
+with col1:
+    st.markdown("""
+    <div style="text-align: center; padding: 20px; background: rgba(31, 119, 180, 0.1); border-radius: 10px;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🗺️</div>
+        <h3 style="color: #1f77b4; margin: 10px 0;">Single Map Generator</h3>
+        <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Create a single high-quality map</p>
+        <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
+            <li>RBF interpolation</li>
+            <li>Customizable labels</li>
+            <li>Multiple formats</li>
+            <li>Publication-ready</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("🚀 Launch", key="btn_single", use_container_width=True):
         st.switch_page("pages/1_single_map.py")
-    elif selected_tool == "multi":
+
+with col2:
+    st.markdown("""
+    <div style="text-align: center; padding: 20px; background: rgba(102, 126, 234, 0.1); border-radius: 10px;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">📊</div>
+        <h3 style="color: #667eea; margin: 10px 0;">Multi-Map Grid</h3>
+        <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Multiple maps in grid layout</p>
+        <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
+            <li>Batch processing</li>
+            <li>Grid customization</li>
+            <li>Consistent scaling</li>
+            <li>Professional styling</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("🚀 Launch", key="btn_multi", use_container_width=True):
         st.switch_page("pages/2_multi_map_grid.py")
-    elif selected_tool == "animator":
+
+with col3:
+    st.markdown("""
+    <div style="text-align: center; padding: 20px; background: rgba(245, 87, 108, 0.1); border-radius: 10px;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">✨</div>
+        <h3 style="color: #f5576c; margin: 10px 0;">Interactive Animator</h3>
+        <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Animated GIFs from time-series</p>
+        <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
+            <li>Month selection</li>
+            <li>Custom interpolation</li>
+            <li>GIF generation</li>
+            <li>PNG export</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+    if st.button("🚀 Launch", key="btn_animator", use_container_width=True):
         st.switch_page("pages/3_animator.py")
+
+st.markdown("""
+<div style="text-align: center; margin-top: 40px; color: #888; font-size: 0.9rem;">
+    <p>📌 Click a button above or use the sidebar menu to get started</p>
+</div>
+""", unsafe_allow_html=True)
