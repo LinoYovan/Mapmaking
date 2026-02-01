@@ -244,10 +244,8 @@ with col1:
         <h3 style="color: #1f77b4; margin: 10px 0;">Single Map Generator</h3>
         <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Create a single high-quality map</p>
         <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
-            <li>RBF interpolation</li>
             <li>Customizable labels</li>
             <li>Multiple formats</li>
-            <li>Publication-ready</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
@@ -263,8 +261,6 @@ with col2:
         <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
             <li>Batch processing</li>
             <li>Grid customization</li>
-            <li>Consistent scaling</li>
-            <li>Professional styling</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
@@ -278,7 +274,6 @@ with col3:
         <h3 style="color: #f5576c; margin: 10px 0;">Interactive Animator</h3>
         <p style="font-size: 0.85rem; color: #666; margin: 5px 0;">Animated GIFs from time-series</p>
         <ul style="text-align: left; font-size: 0.8rem; color: #666; margin: 10px 0; padding-left: 15px;">
-            <li>Month selection</li>
             <li>Custom interpolation</li>
             <li>GIF generation</li>
             <li>PNG export</li>
