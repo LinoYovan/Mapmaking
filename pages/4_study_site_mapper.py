@@ -159,7 +159,7 @@ with st.sidebar:
     
     export_format = st.selectbox(
         "Export format",
-        ["HTML (Interactive)", "PNG (Static)", "PDF (Static)"],
+        ["HTML (Interactive - Recommended)", "PDF (With Metadata)"],
         index=0
     )
     
@@ -344,7 +344,7 @@ with col2:
     st.subheader("Download Map")
     
     if st.session_state.map_html:
-        if export_format == "HTML (Interactive)":
+        if export_format == "HTML (Interactive - Recommended)":
             # Download interactive HTML
             html_bytes = st.session_state.map_html.encode('utf-8')
             st.download_button(
@@ -354,19 +354,16 @@ with col2:
                 mime="text/html",
                 use_container_width=True
             )
-        elif export_format == "PNG (Static)":
-            st.info("💡 PNG export requires additional setup. Using HTML instead.")
-            html_bytes = st.session_state.map_html.encode('utf-8')
-            st.download_button(
-                label="📥 Download as HTML (Interactive)",
-                data=html_bytes,
-                file_name=f"{filename}.html",
-                mime="text/html",
-                use_container_width=True
-            )
-            st.caption("Tip: Open HTML in browser and use browser's 'Save as Image' feature for PNG")
+            st.info("""
+            **Why HTML?**
+            - ✅ Fully interactive (zoom, pan, click)
+            - ✅ Works offline - no internet needed
+            - ✅ All features included
+            - ✅ Lightweight file size
+            - 💡 Open in browser → Print to PDF for static version
+            """)
         
-        elif export_format == "PDF (Static)":
+        elif export_format == "PDF (With Metadata)":
             try:
                 from reportlab.lib.pagesizes import A4
                 from reportlab.pdfgen import canvas as pdf_canvas
@@ -376,37 +373,64 @@ with col2:
                 c = pdf_canvas.Canvas(pdf_buffer, pagesize=A4)
                 
                 # Add title
-                c.setFont("Helvetica-Bold", 16)
-                c.drawString(50, 780, study_site_name)
+                c.setFont("Helvetica-Bold", 18)
+                c.drawString(50, 780, "Study Site Map Report")
                 
                 # Add metadata
+                c.setFont("Helvetica-Bold", 12)
+                c.drawString(50, 750, study_site_name)
+                
                 c.setFont("Helvetica", 10)
-                c.drawString(50, 760, f"Location: {location_coords['address']}")
-                c.drawString(50, 745, f"Coordinates: {lat:.6f}°, {lon:.6f}°")
-                c.drawString(50, 730, f"Buffer Radius: {buffer_size/1000:.2f}km")
-                c.drawString(50, 715, f"Map Style: {map_style}")
-                c.drawString(50, 700, f"Sample Points: {len(st.session_state.sample_points)}")
-                c.drawString(50, 685, f"Created: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                y_pos = 730
+                
+                info_lines = [
+                    f"Location: {location_coords['address']}",
+                    f"Latitude: {lat:.6f}°",
+                    f"Longitude: {lon:.6f}°",
+                    f"Buffer Radius: {buffer_size/1000:.2f} km",
+                    f"Map Style: {map_style}",
+                    f"Zoom Level: {zoom_level}",
+                    f"Sample Points: {len(st.session_state.sample_points)}",
+                    f"Created: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+                ]
+                
+                for line in info_lines:
+                    c.drawString(50, y_pos, line)
+                    y_pos -= 20
+                
+                # Add sample points list if any
+                if not st.session_state.sample_points.empty:
+                    c.setFont("Helvetica-Bold", 11)
+                    c.drawString(50, y_pos - 10, "Sample Points:")
+                    c.setFont("Helvetica", 9)
+                    y_pos -= 30
+                    
+                    for idx, row in st.session_state.sample_points.iterrows():
+                        point_text = f"• {row['Name']}: {row['Latitude']:.4f}°, {row['Longitude']:.4f}° ({row['Color']})"
+                        c.drawString(70, y_pos, point_text)
+                        y_pos -= 15
                 
                 # Add note
                 c.setFont("Helvetica-Oblique", 9)
-                c.drawString(50, 665, "Note: Static PDF. Download HTML for interactive map features.")
+                c.drawString(50, 50, "For interactive map features, download the HTML version.")
                 
                 c.save()
                 pdf_buffer.seek(0)
                 
                 st.download_button(
-                    label="📥 Download Map as PDF",
+                    label="📥 Download Map Report (PDF)",
                     data=pdf_buffer,
-                    file_name=f"{filename}.pdf",
+                    file_name=f"{filename}_report.pdf",
                     mime="application/pdf",
                     use_container_width=True
                 )
+                st.success("✅ PDF report generated successfully")
+                
             except ImportError:
-                st.warning("⚠️ ReportLab not installed. Provide HTML alternative.")
+                st.warning("⚠️ PDF library not available. Using HTML instead.")
                 html_bytes = st.session_state.map_html.encode('utf-8')
                 st.download_button(
-                    label="📥 Download as HTML instead",
+                    label="📥 Download as HTML",
                     data=html_bytes,
                     file_name=f"{filename}.html",
                     mime="text/html",
@@ -414,8 +438,16 @@ with col2:
                 )
             except Exception as e:
                 st.error(f"PDF Error: {str(e)}")
+                html_bytes = st.session_state.map_html.encode('utf-8')
+                st.download_button(
+                    label="📥 Download as HTML",
+                    data=html_bytes,
+                    file_name=f"{filename}.html",
+                    mime="text/html",
+                    use_container_width=True
+                )
     else:
-        st.warning("⚠️ No map generated yet")
+        st.warning("⚠️ No map generated yet. Configure map settings and reload.")
 
 # ==================== MAP METADATA ====================
 st.markdown('<h2 class="section-header">📊 Map Metadata</h2>', unsafe_allow_html=True)
