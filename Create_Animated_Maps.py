@@ -1,10 +1,8 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
-import os
 
 # Set page configuration
 st.set_page_config(
-    page_title="GeoSpatial Mapping Suite",
+    page_title="Create Maps",
     page_icon="🗺️",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -18,17 +16,16 @@ st.markdown("""
         padding: 0;
     }
     
-    body {
-        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
     .main {
         background: transparent !important;
     }
     
     .stMainBlockContainer {
         background: transparent !important;
+    }
+    
+    html, body {
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     }
     
     .main-container {
@@ -38,6 +35,7 @@ st.markdown("""
         justify-content: center;
         min-height: 100vh;
         padding: 40px 20px;
+        background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
     }
     
     .header-section {
@@ -216,15 +214,14 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Hide default Streamlit UI elements
-hide_streamlit_style = """
+# Hide Streamlit UI
+st.markdown("""
     <style>
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         .stDeployButton {visibility: hidden;}
     </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 # Main content
 st.markdown("""
@@ -236,52 +233,71 @@ st.markdown("""
     
     <div class="cards-container">
         <div class="card">
-            <span class="card-icon">✨</span>
-            <h2 class="card-title">Interactive Animator</h2>
-            <p class="card-description">Create dynamic animated maps with interactive controls and real-time visualization.</p>
+            <span class="card-icon">🗺️</span>
+            <h2 class="card-title">Single Map Generator</h2>
+            <p class="card-description">Create a single high-quality map with interpolated sampling points.</p>
             <div class="card-features">
                 <ul>
-                    <li>Upload CSV & Shapefile data</li>
-                    <li>Interactive month selection</li>
-                    <li>Customizable interpolation</li>
-                    <li>Generate GIF animations</li>
-                    <li>Download PNG visualizations</li>
+                    <li>RBF interpolation</li>
+                    <li>Single snapshot mapping</li>
+                    <li>Customizable labels</li>
+                    <li>Multiple export formats</li>
+                    <li>Publication-ready output</li>
                 </ul>
             </div>
-            <button class="card-button" onclick="window.location.href='?app=animator'">Launch Animator</button>
         </div>
         
         <div class="card">
             <span class="card-icon">📊</span>
-            <h2 class="card-title">Static Map Generator</h2>
-            <p class="card-description">Generate high-quality static maps with advanced customization options.</p>
+            <h2 class="card-title">Multi-Map Grid</h2>
+            <p class="card-description">Generate multiple maps in a grid layout for seasonal or time-series data.</p>
             <div class="card-features">
                 <ul>
-                    <li>Multi-month grid layouts</li>
-                    <li>Fine-tuned styling controls</li>
-                    <li>Custom colormaps & legends</li>
-                    <li>Professional export formats</li>
-                    <li>Publication-ready quality</li>
+                    <li>Batch processing</li>
+                    <li>Customizable grid layout</li>
+                    <li>Consistent color scaling</li>
+                    <li>Interactive controls</li>
+                    <li>Professional styling</li>
                 </ul>
             </div>
-            <button class="card-button" onclick="window.location.href='?app=static'">Launch Generator</button>
+        </div>
+        
+        <div class="card">
+            <span class="card-icon">✨</span>
+            <h2 class="card-title">Interactive Animator</h2>
+            <p class="card-description">Create animated GIFs showing time-series data with interactive controls.</p>
+            <div class="card-features">
+                <ul>
+                    <li>Interactive month selection</li>
+                    <li>Customizable interpolation</li>
+                    <li>GIF animation generation</li>
+                    <li>Real-time adjustment</li>
+                    <li>PNG export option</li>
+                </ul>
+            </div>
         </div>
     </div>
     
     <div class="info-section">
         <div class="divider"></div>
-        <p>📌 Select an application above to get started</p>
+        <p>📌 Use the sidebar or click a card above to select an application</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Handle app selection via query parameters
-query_params = st.query_params
-
-if "app" in query_params:
-    selected_app = query_params["app"]
+# Sidebar navigation
+with st.sidebar:
+    st.header("🗺️ Navigation")
     
-    if selected_app == "animator":
-        st.switch_page("pages/1_animator.py")
-    elif selected_app == "static":
-        st.switch_page("pages/2_static_generator.py")
+    selected = st.radio(
+        "Choose a tool:",
+        ["📌 Home", "🗺️ Single Map", "📊 Multi-Map Grid", "✨ Animator"],
+        index=0
+    )
+    
+    if selected == "🗺️ Single Map":
+        st.switch_page("pages/1_single_map.py")
+    elif selected == "📊 Multi-Map Grid":
+        st.switch_page("pages/2_multi_map_grid.py")
+    elif selected == "✨ Animator":
+        st.switch_page("pages/3_animator.py")
