@@ -354,8 +354,66 @@ with col2:
                 mime="text/html",
                 use_container_width=True
             )
-        else:
-            st.info("💡 Note: PNG and PDF export require additional libraries. Use HTML export for full interactivity.")
+        elif export_format == "PNG (Static)":
+            st.info("💡 PNG export requires additional setup. Using HTML instead.")
+            html_bytes = st.session_state.map_html.encode('utf-8')
+            st.download_button(
+                label="📥 Download as HTML (Interactive)",
+                data=html_bytes,
+                file_name=f"{filename}.html",
+                mime="text/html",
+                use_container_width=True
+            )
+            st.caption("Tip: Open HTML in browser and use browser's 'Save as Image' feature for PNG")
+        
+        elif export_format == "PDF (Static)":
+            try:
+                from reportlab.lib.pagesizes import A4
+                from reportlab.pdfgen import canvas as pdf_canvas
+                
+                # Create PDF with map information
+                pdf_buffer = io.BytesIO()
+                c = pdf_canvas.Canvas(pdf_buffer, pagesize=A4)
+                
+                # Add title
+                c.setFont("Helvetica-Bold", 16)
+                c.drawString(50, 780, study_site_name)
+                
+                # Add metadata
+                c.setFont("Helvetica", 10)
+                c.drawString(50, 760, f"Location: {location_coords['address']}")
+                c.drawString(50, 745, f"Coordinates: {lat:.6f}°, {lon:.6f}°")
+                c.drawString(50, 730, f"Buffer Radius: {buffer_size/1000:.2f}km")
+                c.drawString(50, 715, f"Map Style: {map_style}")
+                c.drawString(50, 700, f"Sample Points: {len(st.session_state.sample_points)}")
+                c.drawString(50, 685, f"Created: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                
+                # Add note
+                c.setFont("Helvetica-Oblique", 9)
+                c.drawString(50, 665, "Note: Static PDF. Download HTML for interactive map features.")
+                
+                c.save()
+                pdf_buffer.seek(0)
+                
+                st.download_button(
+                    label="📥 Download Map as PDF",
+                    data=pdf_buffer,
+                    file_name=f"{filename}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+            except ImportError:
+                st.warning("⚠️ ReportLab not installed. Provide HTML alternative.")
+                html_bytes = st.session_state.map_html.encode('utf-8')
+                st.download_button(
+                    label="📥 Download as HTML instead",
+                    data=html_bytes,
+                    file_name=f"{filename}.html",
+                    mime="text/html",
+                    use_container_width=True
+                )
+            except Exception as e:
+                st.error(f"PDF Error: {str(e)}")
     else:
         st.warning("⚠️ No map generated yet")
 
